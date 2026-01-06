@@ -1,10 +1,16 @@
+import "./index.css";
 import SlotList from "./pages/SlotList";
 
 function App() {
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Interview Scheduler</h1>
-      <SlotList />
+    <div className="app-container">
+      <div className="app-header">
+        <h1 className="app-title">Interview Scheduler</h1>
+        <div className="app-sub">Book an available interview slot</div>
+      </div>
+      <div className="card">
+        <SlotList />
+      </div>
     </div>
   );
 }

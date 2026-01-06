@@ -1,0 +1,115 @@
+:root {
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --danger: #dc2626;
+}
+
+* {
+  box-sizing: border-box;
+}
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial;
+  background: var(--bg);
+}
+
+.app-container {
+  max-width: 880px;
+  margin: 28px auto;
+  padding: 20px;
+}
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.app-title {
+  font-size: 28px;
+  margin: 0;
+  color: #0f172a;
+}
+.app-sub {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+.slots-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.slot-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 8px;
+}
+.slot-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.slot-time {
+  font-weight: 600;
+  color: #0f172a;
+}
+.slot-meta {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.slot-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn {
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--accent);
+  color: white;
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.btn-outline {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid rgba(37, 99, 235, 0.12);
+}
+.badge-full {
+  background: #fef2f2;
+  color: var(--danger);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-weight: 600;
+}
+
+.empty {
+  color: var(--muted);
+  padding: 12px;
+}
+.loading {
+  color: var(--muted);
+  padding: 12px;
+}
