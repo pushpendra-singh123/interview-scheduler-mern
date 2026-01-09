@@ -15,20 +15,8 @@ exports.bookSlot = async (req, res) => {
   try {
     const slot = await Slot.findById(req.params.id);
     if (!slot) return res.status(404).json({ message: "Slot not found" });
-    const { email } = req.body;
-
-    if (!email)
-      return res
-        .status(400)
-        .json({ message: "Email is required to book the slot" });
-
-    const normalizedEmail = String(email).trim().toLowerCase();
-    if (!normalizedEmail.includes("@"))
-      return res.status(400).json({ message: "Invalid email" });
-
-    // Booking requires existing user
-    const user = await User.findOne({ email: normalizedEmail });
-    if (!user) return res.status(404).json({ message: "User not exist" });
+    const user = req.user;
+    const normalizedEmail = String(user.email).trim().toLowerCase();
 
     if ((slot.bookings || []).length >= slot.maxCandidates)
       return res.status(400).json({ message: "Slot full" });
@@ -81,16 +69,8 @@ exports.unbookSlot = async (req, res) => {
     const slot = await Slot.findById(req.params.id);
     if (!slot) return res.status(404).json({ message: "Slot not found" });
 
-    const { email } = req.body;
-    if (!email)
-      return res
-        .status(400)
-        .json({ message: "Email is required to unbook the slot" });
-
-    const normalizedEmail = String(email).trim().toLowerCase();
-
-    const user = await User.findOne({ email: normalizedEmail });
-    if (!user) return res.status(404).json({ message: "User not exist" });
+    const user = req.user;
+    const normalizedEmail = String(user.email).trim().toLowerCase();
 
     const before = slot.bookings || [];
     const after = before.filter((b) => {
