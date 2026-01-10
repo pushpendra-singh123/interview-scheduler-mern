@@ -5,8 +5,6 @@ export default function SlotList() {
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userName, setUserName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -23,23 +21,6 @@ export default function SlotList() {
   const refreshSlots = async () => {
     const list = await axios.get("/api/slots");
     setSlots(list.data);
-  };
-
-  const createUser = async (e) => {
-    e.preventDefault();
-    try {
-      if (!userName || !userEmail) {
-        alert("Name and email are required");
-        return;
-      }
-      const res = await axios.post("/api/users", {
-        name: userName,
-        email: userEmail,
-      });
-      alert(`User created: ${res.data.email}`);
-    } catch (err) {
-      alert(err.response?.data?.message || "Failed to create user");
-    }
   };
 
   const book = async (id) => {
@@ -74,24 +55,6 @@ export default function SlotList() {
   return (
     <div>
       <h2>Available Slots</h2>
-
-      <form onSubmit={createUser} style={{ marginBottom: 12 }}>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <input
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            placeholder="Name"
-          />
-          <input
-            value={userEmail}
-            onChange={(e) => setUserEmail(e.target.value)}
-            placeholder="Email"
-          />
-          <button className="btn" type="submit">
-            Create User
-          </button>
-        </div>
-      </form>
 
       {slots.length === 0 && <div className="empty">No slots found</div>}
 
