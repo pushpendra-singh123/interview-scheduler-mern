@@ -11,6 +11,14 @@ function toInputValue(date) {
   )}:${pad(d.getMinutes())}`;
 }
 
+function toSlotDraft(slot) {
+  return {
+    startTime: toInputValue(slot.startTime),
+    endTime: toInputValue(slot.endTime),
+    maxCandidates: String(slot.maxCandidates ?? ""),
+  };
+}
+
 export default function AdminDashboard({ user }) {
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,6 +26,8 @@ export default function AdminDashboard({ user }) {
 
   const [drafts, setDrafts] = useState({});
   const [savingById, setSavingById] = useState({});
+
+  const [editingId, setEditingId] = useState(null);
 
   const [activeView, setActiveView] = useState("existing");
 
@@ -34,11 +44,7 @@ export default function AdminDashboard({ user }) {
 
       const nextDrafts = {};
       for (const s of data) {
-        nextDrafts[s._id] = {
-          startTime: toInputValue(s.startTime),
-          endTime: toInputValue(s.endTime),
-          maxCandidates: String(s.maxCandidates ?? ""),
-        };
+        nextDrafts[s._id] = toSlotDraft(s);
       }
       setDrafts(nextDrafts);
     } catch (err) {
@@ -104,6 +110,11 @@ export default function AdminDashboard({ user }) {
     } finally {
       setSavingById((p) => ({ ...p, [slot._id]: false }));
     }
+  };
+
+  const cancelEdit = (slot) => {
+    updateDraft(slot._id, toSlotDraft(slot));
+    setEditingId(null);
   };
 
   if (loading) return <div className="loading">Loading slots…</div>;
@@ -239,11 +250,7 @@ export default function AdminDashboard({ user }) {
               const max = s.maxCandidates || 0;
               const full = max > 0 && booked >= max;
 
-              const d = drafts[s._id] || {
-                startTime: toInputValue(s.startTime),
-                endTime: toInputValue(s.endTime),
-                maxCandidates: String(s.maxCandidates ?? ""),
-              };
+              const d = drafts[s._id] || toSlotDraft(s);
 
               const dirty =
                 d.startTime !== toInputValue(s.startTime) ||
@@ -251,6 +258,7 @@ export default function AdminDashboard({ user }) {
                 String(d.maxCandidates) !== String(s.maxCandidates ?? "");
 
               const saving = !!savingById[s._id];
+              const isEditing = editingId === s._id;
 
               return (
                 <div key={s._id} className="slot-row">
@@ -268,40 +276,65 @@ export default function AdminDashboard({ user }) {
                     className="slot-actions"
                     style={{ gap: 8, flexWrap: "wrap" }}
                   >
-                    <input
-                      className="input"
-                      type="datetime-local"
-                      value={d.startTime}
-                      onChange={(e) =>
-                        updateDraft(s._id, { startTime: e.target.value })
-                      }
-                    />
-                    <input
-                      className="input"
-                      type="datetime-local"
-                      value={d.endTime}
-                      onChange={(e) =>
-                        updateDraft(s._id, { endTime: e.target.value })
-                      }
-                    />
-                    <input
-                      className="input"
-                      value={d.maxCandidates}
-                      onChange={(e) =>
-                        updateDraft(s._id, { maxCandidates: e.target.value })
-                      }
-                      inputMode="numeric"
-                      style={{ width: 90 }}
-                    />
+                    {!isEditing ? (
+                      <button
+                        className="btn btn-outline"
+                        type="button"
+                        onClick={() => setEditingId(s._id)}
+                      >
+                        Edit
+                      </button>
+                    ) : (
+                      <>
+                        <input
+                          className="input"
+                          type="datetime-local"
+                          value={d.startTime}
+                          onChange={(e) =>
+                            updateDraft(s._id, { startTime: e.target.value })
+                          }
+                        />
+                        <input
+                          className="input"
+                          type="datetime-local"
+                          value={d.endTime}
+                          onChange={(e) =>
+                            updateDraft(s._id, { endTime: e.target.value })
+                          }
+                        />
+                        <input
+                          className="input"
+                          value={d.maxCandidates}
+                          onChange={(e) =>
+                            updateDraft(s._id, {
+                              maxCandidates: e.target.value,
+                            })
+                          }
+                          inputMode="numeric"
+                          style={{ width: 90 }}
+                        />
 
-                    <button
-                      className="btn"
-                      disabled={!dirty || saving}
-                      onClick={() => saveSlot(s)}
-                      type="button"
-                    >
-                      {saving ? "Saving…" : "Save"}
-                    </button>
+                        <button
+                          className="btn"
+                          disabled={!dirty || saving}
+                          onClick={async () => {
+                            await saveSlot(s);
+                            setEditingId(null);
+                          }}
+                          type="button"
+                        >
+                          {saving ? "Saving…" : "Save"}
+                        </button>
+                        <button
+                          className="btn btn-outline"
+                          disabled={saving}
+                          onClick={() => cancelEdit(s)}
+                          type="button"
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               );
