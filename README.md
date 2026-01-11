@@ -1,5 +1,7 @@
 ## Vasitum interview-scheduler Assignment
 
-## b:https://interview-scheduler-usx9.onrender.com
+## Click to see website [link](https://interview-scheduler-mern.vercel.app/)
 
-## f:https://interview-scheduler-mern.vercel.app/
+### b:https://interview-scheduler-usx9.onrender.com
+
+### f:https://interview-scheduler-mern.vercel.app/
