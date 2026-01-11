@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { signup } from "../api";
 import { setAuth } from "../auth";
 
@@ -36,8 +37,17 @@ export default function Signup({ role, onSignup }) {
   const isAdmin = selectedRole === "admin";
 
   return (
-    <div>
-      <h2>{isAdmin ? "Admin Signup" : "Signup"}</h2>
+    <div className="auth-page">
+      <div className="auth-header">
+        <h2 className="auth-title">
+          {isAdmin ? "Admin Signup" : "Create account"}
+        </h2>
+        <div className="auth-sub">
+          {isAdmin
+            ? "Create an interviewer/admin account."
+            : "Create a candidate account to book a slot."}
+        </div>
+      </div>
 
       <form onSubmit={submit} className="form">
         {!fixedRole && (
@@ -107,6 +117,13 @@ export default function Signup({ role, onSignup }) {
           </button>
         </div>
       </form>
+
+      <div className="auth-footer">
+        <span>Already have an account?</span>
+        <Link className="link" to="/login">
+          Login
+        </Link>
+      </div>
 
       {error && <div className="empty">{error}</div>}
     </div>

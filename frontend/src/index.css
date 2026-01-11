@@ -4,6 +4,8 @@
   --muted: #6b7280;
   --accent: #2563eb;
   --danger: #dc2626;
+  --text: #0f172a;
+  --ring: rgba(37, 99, 235, 0.35);
 }
 
 * {
@@ -16,6 +18,14 @@ body,
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial;
   background: var(--bg);
+  color: var(--text);
+}
+
+button,
+a {
+  transition: background-color 160ms ease, border-color 160ms ease,
+    color 160ms ease, transform 120ms ease, box-shadow 160ms ease,
+    opacity 160ms ease;
 }
 
 .navbar {
@@ -40,6 +50,10 @@ body,
   flex-direction: column;
   gap: 2px;
   text-decoration: none;
+}
+
+.brand:hover .brand-title {
+  color: #0b1225;
 }
 
 .brand-title {
@@ -99,6 +113,56 @@ body,
   box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
 }
 
+.auth-page {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.auth-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.auth-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.auth-sub {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.auth-footer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
 .nav-right {
   margin-left: auto;
   display: flex;
@@ -109,6 +173,10 @@ body,
 .form {
   margin-top: 12px;
   max-width: 420px;
+}
+
+.auth-page .form {
+  max-width: none;
 }
 
 .form-row {
@@ -130,9 +198,18 @@ body,
   border: 1px solid rgba(15, 23, 42, 0.12);
   outline: none;
   font-size: 14px;
+  background: #fff;
+}
+.input:hover {
+  border-color: rgba(15, 23, 42, 0.18);
 }
 .input:focus {
-  border-color: rgba(37, 99, 235, 0.35);
+  border-color: var(--ring);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.input:focus-visible {
+  outline: none;
 }
 
 .auth-actions {
@@ -203,6 +280,20 @@ body,
   cursor: pointer;
   background: var(--accent);
   color: white;
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.08);
+}
+.btn:hover:not(:disabled) {
+  filter: brightness(0.98);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.1);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(0px);
+  box-shadow: 0 6px 12px rgba(15, 23, 42, 0.1);
+}
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
 .btn:disabled {
   opacity: 0.6;
@@ -212,6 +303,18 @@ body,
   background: transparent;
   color: var(--accent);
   border: 1px solid rgba(37, 99, 235, 0.12);
+}
+.btn-outline:hover:not(:disabled) {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.2);
+}
+
+.btn.unbook {
+  background: var(--danger);
+}
+
+.btn.unbook:hover:not(:disabled) {
+  filter: brightness(0.98);
 }
 .badge-full {
   background: #fef2f2;

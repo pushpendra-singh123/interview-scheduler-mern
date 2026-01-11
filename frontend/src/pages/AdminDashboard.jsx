@@ -126,8 +126,8 @@ export default function AdminDashboard({ user }) {
         slotId: s._id,
         startTime: s.startTime,
         endTime: s.endTime,
-        name: b.name || "",
-        email: b.email || "",
+        name: b?.user?.name || b?.name || "",
+        email: b?.user?.email || b?.email || "",
       }))
     )
     .filter((x) => x.email);
@@ -190,12 +190,22 @@ export default function AdminDashboard({ user }) {
                       <td>
                         {Number.isNaN(start.getTime())
                           ? "—"
-                          : start.toLocaleDateString()}
+                          : start.toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "2-digit",
+                            })}
                       </td>
                       <td>
                         {Number.isNaN(start.getTime())
                           ? "—"
-                          : `${start.toLocaleTimeString()} – ${end.toLocaleTimeString()}`}
+                          : `${start.toLocaleTimeString("en-GB", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })} – ${end.toLocaleTimeString("en-GB", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}`}
                       </td>
                     </tr>
                   );
@@ -264,8 +274,21 @@ export default function AdminDashboard({ user }) {
                 <div key={s._id} className="slot-row">
                   <div className="slot-info">
                     <div className="slot-time">
-                      {new Date(s.startTime).toLocaleString()} —{" "}
-                      {new Date(s.endTime).toLocaleString()}
+                      {new Date(s.startTime).toLocaleString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}{" "}
+                      —{" "}
+                      {new Date(s.endTime).toLocaleString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </div>
                     <div className="slot-meta">
                       {booked}/{max} candidates {full ? "(Full)" : ""}

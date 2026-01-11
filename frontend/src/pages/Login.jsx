@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { login } from "../api";
 import { setAuth } from "../auth";
 
@@ -24,8 +25,13 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    <div className="auth-page">
+      <div className="auth-header">
+        <h2 className="auth-title">Welcome back</h2>
+        <div className="auth-sub">
+          Login in to book or manage interview slots.
+        </div>
+      </div>
 
       <form onSubmit={submit} className="form">
         <div className="form-row">
@@ -57,6 +63,13 @@ export default function Login({ onLogin }) {
           </button>
         </div>
       </form>
+
+      <div className="auth-footer">
+        <span>New here?</span>
+        <Link className="link" to="/signup">
+          Create an account
+        </Link>
+      </div>
 
       {error && <div className="empty">{error}</div>}
     </div>
