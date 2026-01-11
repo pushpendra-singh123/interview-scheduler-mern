@@ -7,7 +7,6 @@ import Signup from "./pages/Signup";
 import UserDashboard from "./pages/UserDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import { clearAuth, getStoredUser, initAuthFromStorage, setAuth } from "./auth";
-import { me } from "./api";
 
 function RequireRole({ user, role, children }) {
   if (!user) return <Navigate to="/login" replace />;
@@ -25,19 +24,9 @@ function App() {
   const [user, setUser] = useState(getStoredUser());
 
   useEffect(() => {
-    initAuthFromStorage();
-    // Best-effort refresh user info if token exists.
-    (async () => {
-      try {
-        const stored = getStoredUser();
-        if (!stored) return;
-        const data = await me();
-        setAuth(localStorage.getItem("auth_token"), data.user);
-        setUser(data.user);
-      } catch {
-        // ignore
-      }
-    })();
+    const { token, user: storedUser } = initAuthFromStorage();
+    if (token && storedUser) setAuth(token, storedUser);
+    setUser(storedUser);
   }, []);
 
   const logout = () => {

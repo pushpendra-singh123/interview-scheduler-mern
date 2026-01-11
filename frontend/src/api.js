@@ -16,11 +16,6 @@ export async function login({ email, password }) {
   return res.data;
 }
 
-export async function me() {
-  const res = await axios.get("/api/auth/me");
-  return res.data;
-}
-
 export async function fetchSlots() {
   const res = await axios.get("/api/slots");
   return res.data;
@@ -37,11 +32,11 @@ export async function unbookSlot(slotId) {
 }
 
 export async function createSlot(payload) {
-  const res = await axios.post("/api/slots", payload);
+  const res = await axios.post("/api/slots/createSlot", payload);
   return res.data;
 }
 
 export async function updateSlot(slotId, payload) {
-  const res = await axios.patch(`/api/slots/${slotId}`, payload);
+  const res = await axios.patch(`/api/slots/update/${slotId}`, payload);
   return res.data;
 }
