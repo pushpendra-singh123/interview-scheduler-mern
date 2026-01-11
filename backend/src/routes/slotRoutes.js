@@ -7,12 +7,12 @@ const {
   updateSlot,
 } = require("../controllers/slotController");
 
-const { requireAuth, requireAdmin } = require("../middleware/auth");
+const { requireAuth, isAdmin } = require("../middleware/auth");
 
 router.get("/", getSlots);
-router.post("/", requireAuth, requireAdmin, createSlot);
+router.post("/createSlot", requireAuth, isAdmin, createSlot);
 router.post("/book/:id", requireAuth, bookSlot);
 router.post("/unbook/:id", requireAuth, unbookSlot);
-router.patch("/:id", requireAuth, requireAdmin, updateSlot);
+router.patch("/update/:id", requireAuth, isAdmin, updateSlot);
 
 module.exports = router;

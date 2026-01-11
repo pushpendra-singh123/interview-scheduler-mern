@@ -10,25 +10,13 @@ const slotSchema = new mongoose.Schema({
       user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: false,
+        required: true,
       },
-      email: { type: String, required: false },
-      name: { type: String, required: false },
       bookedAt: { type: Date, default: Date.now },
     },
   ],
 });
 
-// Enforce "a candidate can select only one slot" across the whole system.
-// This prevents the same email from appearing in bookings of multiple slots.
-slotSchema.index(
-  { "bookings.email": 1 },
-  {
-    unique: true,
-    partialFilterExpression: {
-      "bookings.email": { $exists: true, $type: "string" },
-    },
-  }
-);
+slotSchema.index({ "bookings.user": 1 }, { unique: true });
 
 module.exports = mongoose.model("Slot", slotSchema);

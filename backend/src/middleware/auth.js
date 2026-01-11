@@ -19,7 +19,7 @@ async function requireAuth(req, res, next) {
         message: "JWT not configured",
       });
     }
-
+    // decode jwt token
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     const userId = payload && payload.sub;
 
@@ -47,17 +47,25 @@ async function requireAuth(req, res, next) {
   }
 }
 
-function requireAdmin(req, res, next) {
-  if (!req.user)
-    return res.status(401).json({
-      message: "Unauthorized",
-    });
-  if (req.user.role !== "admin") {
+function isAdmin(req, res, next) {
+  try {
+    if (!req.user)
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    if (req.user.role !== "admin") {
+      return res.status(500).json({
+        success: false,
+        message: "This is a protect route for Admins,you can not access it",
+      });
+    }
+    next();
+  } catch (err) {
     return res.status(500).json({
+      success: false,
       message: "User Role is not Matching",
     });
   }
-  next();
 }
 
-module.exports = { requireAuth, requireAdmin };
+module.exports = { requireAuth, isAdmin };

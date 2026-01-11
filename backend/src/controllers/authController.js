@@ -10,7 +10,7 @@ function normalizeEmail(email) {
 
 function signToken(user) {
   const payload = { sub: String(user._id), role: user.role, email: user.email };
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "7d" });
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "3d" });
 }
 
 exports.signup = async (req, res) => {
@@ -54,9 +54,10 @@ exports.signup = async (req, res) => {
       .select({ _id: 1 })
       .lean(); // Converts document into JS object
     if (existing) {
-      return res
-        .status(400)
-        .json({ message: "User with email already exists" });
+      return res.status(400).json({
+        success: false,
+        message: "User with email already exists",
+      });
     }
 
     const passwordHash = await bcrypt.hash(String(password), 10);
@@ -77,30 +78,41 @@ exports.signup = async (req, res) => {
         email: user.email,
         role: user.role,
       },
+      success: true,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 };
+
 
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password)
-      return res
-        .status(400)
-        .json({ message: "Email and password are required" });
-
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email and password are required",
+      });
+    }
     const normalizedEmail = normalizeEmail(email);
     const user = await User.findOne({ email: normalizedEmail });
-    if (!user) return res.status(401).json({ message: "Invalid credentials" });
+    if (!user) {
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
+    }
 
     const ok = await bcrypt.compare(
       String(password),
       String(user.passwordHash)
     );
-    if (!ok) return res.status(401).json({ message: "Invalid credentials" });
+    if (!ok) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
 
     const token = signToken(user);
     res.json({
@@ -111,20 +123,13 @@ exports.login = async (req, res) => {
         email: user.email,
         role: user.role,
       },
+      success: true,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
-};
-
-exports.me = async (req, res) => {
-  res.json({
-    user: {
-      id: req.user._id,
-      name: req.user.name,
-      email: req.user.email,
-      role: req.user.role,
-    },
-  });
 };
