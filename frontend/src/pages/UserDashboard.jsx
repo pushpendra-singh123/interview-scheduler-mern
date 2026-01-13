@@ -1,12 +1,33 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { bookSlot, fetchSlots, unbookSlot } from "../api";
+import {
+  bookSlot,
+  fetchUserNotifications,
+  fetchSlots,
+  markUserNotificationsSeen,
+  unbookSlot,
+} from "../api";
+import NotificationsSection from "../components/NotificationsSection";
+import { useNotifications } from "../hooks/useNotifications";
 
 export default function UserDashboard({ user }) {
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [activeView, setActiveView] = useState("slots");
+
   const myUserId = useMemo(() => String(user?.id || user?._id || ""), [user]);
+
+  const {
+    items: notifications,
+    loading: notifLoading,
+    error: notifError,
+    unseenCount,
+  } = useNotifications({
+    fetchFn: fetchUserNotifications,
+    markSeenFn: markUserNotificationsSeen,
+    active: activeView === "notifications",
+  });
 
   const load = async () => {
     setLoading(true);
@@ -53,55 +74,99 @@ export default function UserDashboard({ user }) {
       <h2>User Dashboard</h2>
       <div className="app-sub">Logged in as {user?.email}</div>
 
-      {slots.length === 0 && <div className="empty">No slots found</div>}
-
-      <div className="slots-list" style={{ marginTop: 12 }}>
-        {slots.map((s) => {
-          const booked = s.bookedCount || 0;
-          const max = s.maxCandidates || 0;
-          const isFull = max > 0 && booked >= max;
-          const mine = (s.bookings || []).some(
-            (b) =>
-              String(b?.user?._id || b?.user || "") === String(myUserId || "")
-          );
-
-          return (
-            <div key={s._id} className="slot-row">
-              <div className="slot-info">
-                <div className="slot-time">
-                  {new Date(s.startTime).toLocaleString("en-GB", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </div>
-                <div className="slot-meta">
-                  {booked}/{max} candidates
-                </div>
-              </div>
-
-              <div className="slot-actions">
-                {mine ? (
-                  <button
-                    className="btn unbook"
-                    onClick={() => doUnbook(s._id)}
-                  >
-                    Unbook
-                  </button>
-                ) : isFull ? (
-                  <div className="badge-full">Full</div>
-                ) : (
-                  <button className="btn" onClick={() => doBook(s._id)}>
-                    Book
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
+      <div className="auth-actions" style={{ marginTop: 12 }}>
+        <button
+          className={activeView === "notifications" ? "btn" : "btn btn-outline"}
+          type="button"
+          onClick={() => setActiveView("notifications")}
+        >
+          Notifications
+          {unseenCount > 0 && (
+            <span className="notif-chip" aria-label={`${unseenCount} new`}>
+              {unseenCount}
+            </span>
+          )}
+        </button>
+        <button
+          className={activeView === "slots" ? "btn" : "btn btn-outline"}
+          type="button"
+          onClick={() => setActiveView("slots")}
+        >
+          Slots
+        </button>
       </div>
+
+      {activeView === "notifications" && (
+        <div style={{ marginTop: 12 }}>
+          {notifLoading ? (
+            <div className="loading">Loading notifications…</div>
+          ) : notifError ? (
+            <div className="empty">
+              Error loading notifications: {notifError}
+            </div>
+          ) : (
+            <NotificationsSection
+              title="Your Notifications"
+              items={notifications}
+            />
+          )}
+        </div>
+      )}
+
+      {activeView === "slots" && (
+        <>
+          {slots.length === 0 && <div className="empty">No slots found</div>}
+
+          <div className="slots-list" style={{ marginTop: 12 }}>
+            {slots.map((s) => {
+              const booked = s.bookedCount || 0;
+              const max = s.maxCandidates || 0;
+              const isFull = max > 0 && booked >= max;
+              const mine = (s.bookings || []).some(
+                (b) =>
+                  String(b?.user?._id || b?.user || "") ===
+                  String(myUserId || "")
+              );
+
+              return (
+                <div key={s._id} className="slot-row">
+                  <div className="slot-info">
+                    <div className="slot-time">
+                      {new Date(s.startTime).toLocaleString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
+                    <div className="slot-meta">
+                      {booked}/{max} candidates
+                    </div>
+                  </div>
+
+                  <div className="slot-actions">
+                    {mine ? (
+                      <button
+                        className="btn unbook"
+                        onClick={() => doUnbook(s._id)}
+                      >
+                        Unbook
+                      </button>
+                    ) : isFull ? (
+                      <div className="badge-full">Full</div>
+                    ) : (
+                      <button className="btn" onClick={() => doBook(s._id)}>
+                        Book
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
     </div>
   );
 }
