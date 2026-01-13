@@ -42,24 +42,24 @@ export async function updateSlot(slotId, payload) {
 }
 
 export async function fetchAdminNotifications() {
-  const res = await axios.get("/api/notifications/admin");
+  const res = await axios.get("/api/notifications/adminNotifications");
   return res.data;
 }
 
 export async function markAdminNotificationsSeen(ids) {
-  const res = await axios.patch("/api/notifications/admin/seen", {
+  const res = await axios.patch("/api/notifications/adminNotifications/seen", {
     ids: Array.isArray(ids) ? ids : undefined,
   });
   return res.data;
 }
 
 export async function fetchUserNotifications() {
-  const res = await axios.get("/api/notifications/user");
+  const res = await axios.get("/api/notifications/userNotifications");
   return res.data;
 }
 
 export async function markUserNotificationsSeen(ids) {
-  const res = await axios.patch("/api/notifications/user/seen", {
+  const res = await axios.patch("/api/notifications/userNotifications/seen", {
     ids: Array.isArray(ids) ? ids : undefined,
   });
   return res.data;

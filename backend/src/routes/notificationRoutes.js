@@ -9,9 +9,15 @@ const {
 } = require("../controllers/notificationController");
 
 router.get("/admin", requireAuth, isAdmin, getAdminNotifications);
-router.patch("/admin/seen", requireAuth, isAdmin, markAdminNotificationsSeen);
+router.get("/adminNotifications", requireAuth, isAdmin, getAdminNotifications);
+router.patch(
+  "/adminNotifications/seen",
+  requireAuth,
+  isAdmin,
+  markAdminNotificationsSeen
+);
 
-router.get("/user", requireAuth, getUserNotifications);
-router.patch("/user/seen", requireAuth, markUserNotificationsSeen);
+router.get("/userNotifications", requireAuth, getUserNotifications);
+router.patch("/userNotifications/seen", requireAuth, markUserNotificationsSeen);
 
 module.exports = router;
