@@ -58,8 +58,8 @@ export function useNotifications({ fetchFn, markSeenFn, active }) {
           unseenIds.includes(n._id) ? { ...n, seenAt: nowIso } : n
         )
       );
-    } catch {
-      // ignore
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed");
     }
   };
 
