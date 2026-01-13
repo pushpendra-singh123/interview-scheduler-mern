@@ -1,4 +1,5 @@
 const Slot = require("../models/Slot");
+const { createAdminNotification } = require("./notificationController");
 
 // handlers for user
 
@@ -66,6 +67,14 @@ exports.bookSlot = async (req, res) => {
     });
     slot.bookedCount = slot.bookings.length;
     await slot.save();
+
+    await createAdminNotification({
+      req,
+      sourceUserId: user._id,
+      type: "BOOK",
+      message: `${user.name || "A user"} booked a slot`,
+    });
+
     res.json({ message: "Slot booked successfully", slot });
   } catch (err) {
     if (err && err.code === 11000)
@@ -100,6 +109,13 @@ exports.unbookSlot = async (req, res) => {
     slot.bookings = after;
     slot.bookedCount = slot.bookings.length;
     await slot.save();
+
+    await createAdminNotification({
+      req,
+      sourceUserId: user._id,
+      type: "UNBOOK",
+      message: `${user.name || "A user"} unbook a slot`,
+    });
 
     res.status(201).json({
       success: true,

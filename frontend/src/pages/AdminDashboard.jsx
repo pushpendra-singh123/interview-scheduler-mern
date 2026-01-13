@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { createSlot, fetchSlots, updateSlot } from "../api";
+import {
+  createSlot,
+  fetchAdminNotifications,
+  fetchSlots,
+  markAdminNotificationsSeen,
+  updateSlot,
+} from "../api";
+import NotificationsSection from "../components/NotificationsSection";
+import { useNotifications } from "../hooks/useNotifications";
 
 function toInputValue(date) {
   if (!date) return "";
@@ -30,6 +38,17 @@ export default function AdminDashboard({ user }) {
   const [editingId, setEditingId] = useState(null);
 
   const [activeView, setActiveView] = useState("existing");
+
+  const {
+    items: notifications,
+    loading: notifLoading,
+    error: notifError,
+    unseenCount,
+  } = useNotifications({
+    fetchFn: fetchAdminNotifications,
+    markSeenFn: markAdminNotificationsSeen,
+    active: activeView === "notifications",
+  });
 
   const [newStart, setNewStart] = useState("");
   const [newEnd, setNewEnd] = useState("");
@@ -139,6 +158,19 @@ export default function AdminDashboard({ user }) {
 
       <div className="auth-actions" style={{ marginTop: 12 }}>
         <button
+          className={activeView === "notifications" ? "btn" : "btn btn-outline"}
+          type="button"
+          onClick={() => setActiveView("notifications")}
+        >
+          Notifications
+          {unseenCount > 0 && (
+            <span className="notif-chip" aria-label={`${unseenCount} new`}>
+              {unseenCount}
+            </span>
+          )}
+        </button>
+
+        <button
           className={activeView === "booked" ? "btn" : "btn btn-outline"}
           type="button"
           onClick={() => setActiveView("booked")}
@@ -162,6 +194,23 @@ export default function AdminDashboard({ user }) {
           Existing Slots
         </button>
       </div>
+
+      {activeView === "notifications" && (
+        <div style={{ marginTop: 12 }}>
+          {notifLoading ? (
+            <div className="loading">Loading notifications…</div>
+          ) : notifError ? (
+            <div className="empty">
+              Error loading notifications: {notifError}
+            </div>
+          ) : (
+            <NotificationsSection
+              title="Admin Notifications"
+              items={notifications}
+            />
+          )}
+        </div>
+      )}
 
       {activeView === "booked" && (
         <div style={{ marginTop: 10 }}>
