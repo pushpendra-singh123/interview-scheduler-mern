@@ -9,7 +9,6 @@ function emitToRoom(io, room, payload) {
   io.to(room).emit("notification:new", payload);
 }
 
-
 exports.getAdminNotifications = async (req, res) => {
   try {
     const items = await Notification.find({ recipientRole: "admin" })
@@ -26,7 +25,6 @@ exports.getAdminNotifications = async (req, res) => {
     });
   }
 };
-
 
 exports.markAdminNotificationsSeen = async (req, res) => {
   try {
@@ -58,12 +56,13 @@ exports.markAdminNotificationsSeen = async (req, res) => {
     const io = getIo(req);
 
     for (const [userId, types] of byUser.entries()) {
-      let message = "interviewer has seen your booking";
+      let message = "The interviewer has seen your booking.";
       const hasBook = types.has("BOOK");
       const hasUnbook = types.has("UNBOOK");
       if (hasBook && hasUnbook)
-        message = "interviewer has seen your booking update";
-      else if (hasUnbook) message = "interviewer has seen your unbooking";
+        message = "The interviewer has seen your booking updates.";
+      else if (hasUnbook)
+        message = "The interviewer has seen your cancellation.";
 
       const doc = await Notification.create({
         recipientUser: userId,
@@ -86,7 +85,6 @@ exports.markAdminNotificationsSeen = async (req, res) => {
   }
 };
 
-
 exports.getUserNotifications = async (req, res) => {
   try {
     const items = await Notification.find({ recipientUser: req.user._id })
@@ -103,7 +101,6 @@ exports.getUserNotifications = async (req, res) => {
     });
   }
 };
-
 
 exports.markUserNotificationsSeen = async (req, res) => {
   try {
@@ -126,7 +123,6 @@ exports.markUserNotificationsSeen = async (req, res) => {
     });
   }
 };
-
 
 exports.createAdminNotification = async ({
   req,
