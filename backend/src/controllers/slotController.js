@@ -7,7 +7,7 @@ exports.getSlots = async (req, res) => {
   try {
     const slots = await Slot.find().populate(
       "bookings.user",
-      "_id name email role"
+      "_id name email role",
     );
     res.json(slots);
   } catch (err) {
@@ -114,7 +114,7 @@ exports.unbookSlot = async (req, res) => {
       req,
       sourceUserId: user._id,
       type: "UNBOOK",
-      message: `${user.name || "A user"} unbook a slot`,
+      message: `${user.name || "A user"} unbooked a slot`,
     });
 
     res.status(201).json({
