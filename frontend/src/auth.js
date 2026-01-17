@@ -10,7 +10,7 @@ export function getStoredToken() {
 export function setAuth(token, user) {
   if (token) {
     localStorage.setItem(TOKEN_KEY, token);
-    axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+    axios.defaults.headers.common.Authorization = `Bearer ${token}`; //Adds token to every Axios request automatically
   } else {
     localStorage.removeItem(TOKEN_KEY);
     delete axios.defaults.headers.common.Authorization;
