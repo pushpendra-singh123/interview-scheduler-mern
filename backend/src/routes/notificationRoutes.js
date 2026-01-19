@@ -8,13 +8,12 @@ const {
   markUserNotificationsSeen,
 } = require("../controllers/notificationController");
 
-router.get("/admin", requireAuth, isAdmin, getAdminNotifications);
 router.get("/adminNotifications", requireAuth, isAdmin, getAdminNotifications);
 router.patch(
   "/adminNotifications/seen",
   requireAuth,
   isAdmin,
-  markAdminNotificationsSeen
+  markAdminNotificationsSeen,
 );
 
 router.get("/userNotifications", requireAuth, getUserNotifications);
